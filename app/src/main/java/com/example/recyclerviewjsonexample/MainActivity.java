@@ -33,8 +33,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         items = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
+
+        //Set Layout Details Of Our Recycler View
+        setUpRecylerView();
     }
 
+    /**
+     * Function To Set Size, View Layout & Layout Manager For the RecyclerView
+     * @param null
+     */
+    public void setUpRecylerView(){
+        recyclerView = findViewById(R.id.main_recyclerview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 }
