@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Set Layout Details Of Our Recycler View
         setUpRecylerView();
+        //Make JSON Request
+        parseJSON(url, Request.Method.GET);
     }
 
     /**
@@ -49,5 +51,44 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.main_recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    /**
+     * Function To Make HTTP Request To The Pixabay API to easily obtain Images
+     * & Their Details
+     * @param url : String url of the request to be made
+     * @param method : integer represent to Volley the request Type
+     */
+    public void parseJSON(String url, int method){
+        JsonObjectRequest request = new JsonObjectRequest(method, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray arr = response.getJSONArray("hits");
+
+                            for(int i = 0; i < arr.length(); i++){
+                                JSONObject hit = arr.getJSONObject(i);
+
+                                String creatorName = hit.getString("user");
+                                String imgURL = hit.getString("webformatURL");
+                                int likes = hit.getInt("likes");
+
+                                items.add(new CardItem(imgURL,creatorName,likes));
+                            }
+                            cardItemAdapter = new CardItemAdapter(MainActivity.this, items);
+                            recyclerView.setAdapter(cardItemAdapter);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+        requestQueue.add(request);
     }
 }
